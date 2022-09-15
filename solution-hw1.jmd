@@ -37,19 +37,24 @@ xpos = [0, -1, -0.25, 1]
 ypos = [1, 0, 0, -1]
 
 graphplot(A, names=names, markersize=0.15, markershapes=shapes, markercolor=:white, x=xpos, y=ypos)
+
 ```
+![img](Slide1.JPG)
 
 ## Problem 1.2
 ```math
 
 \begin{alignat*}{2}
-&\text{The concerntration of YUK after both treatments is} & \\
-& & (100 - 0.8X1 - (1 - 0.005X2)X2)/100\\
+&\text{The mass of YUK after both treatments per day is} & \\
+& & 0.2X1 + 0.005X2^2 + X3\\
+&\text{The cost of all of the treatments is} & \\
+& & X1^2/20 + 1.5X2\\
 &\text{Where} & \\
 & & X1 \leq 100\\
 & & X2 \leq 100\\
-& & X1 + X2 \leq 100\\
-& & (100 - 0.8X1 - (1 - 0.005X2)X2) \leq 20\\
+& & X3 \leq 100\\
+& & X1 + X2 + X3 = 100\\
+& \text{Here X1 is the amount of wastewater treated by soil, X2 is the amount of wastewater treated by chemicals, and X3 is the amount of wastewater without treatment.} & \\
 \end{alignat*}
 ```
 ## Problem 1.3
@@ -62,24 +67,34 @@ function combination_of_two_treatments(x1,x2,x3)
 end
 ```
 ## Problem 1.4
+The evaluation of the model and the graph are shown below:
 ```julia
 using Distributions
 using Plots
-x = rand(Distributions.Dirichlet(3,1),100).*100
-for i in 1:100
-    y = Array{Tuple{Float64, Float64},100}
-    setindex!(y,combination_of_two_treatments(x[1,i],x[2,i],x[3,i]),i)
+x = rand(Distributions.Dirichlet(3,1),500).*100
+yuk_mass = zeros(size(x,2))
+cost = zeros(size(x,2))
+for i in 1:500
+    yuk_mass[i], cost[i] = combination_of_two_treatments(x[1,i],x[2,i],x[3,i])
 end
 
-scatter(y)
-
-
-
+scatter(yuk_mass,cost,label = "result",xlabel = "Remaining mass of YUK in the waste water",ylabel = "Total cost for the treatments",)
+```
+A line shows the effluent standard was added to the graph.
+```julia
+vline!([20], label = "Effluent standard")
 ```
 ## Problem 1.5
-
+Base on the plot from Problem 1.4, I would select a treatment plan of combainning both the soil treatment and chemical treatment together. As the graph shows, most of the results are located to the right of the effluent standard line, which means they cannot meet the requirement.
+In order to meet the standard, a higher daily treatment fee is needed to be applied, which is mostly higher than $200/day. Before the efficiency of the chemical treatment reduced to 80%, the more amount of wastewater be dealt with chemicals, the lower the fee. Pretending all of the waste water is going to be treated, I would suggest to treat 60 m^3 water with soil and 40 m^3 water with chemicals today, which only costs $240/day, and there will be not un-treated water goes into Pristine Brook.
+Maybe there are plans that can be cheaper with un-treated water goes into Pristine Brook, I will not suggest to do so, as the un-treated water will have a higher concerntration than the treated water, as a result, more damage will be caused to the eco system.
 ## Problem 1.6
-
-## Problem 1.7
+One improvement is that the result points should be interactive to make it easier to see the specifit amount of water with different treatments that causes the result. This will make it easier to modify the plan. Another thing is that there is a possibility that the waste water can be treated twice with both treatments. This will highly influence the results. One assumption that should be kept in mind is that after every treatment, only the polutant is reduced, the water stays the same, and the two treatments are considered seperately.
 
 # References
+```math
+\begin{alignat*}{2}
+\text{vline!() code was retrieved from https://docs.juliaplots.org/stable/api/#Plots.vline!-Tuple}\\
+\text{The for loop used in Problem 1.4 retrieved from Prof. Srikrishnan's answer in Ed Discussion.}\\
+\end{alignat*}
+```
