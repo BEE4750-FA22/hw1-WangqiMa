@@ -40,11 +40,40 @@ graphplot(A, names=names, markersize=0.15, markershapes=shapes, markercolor=:whi
 ```
 
 ## Problem 1.2
+```math
 
+\begin{alignat*}{2}
+&\text{The concerntration of YUK after both treatments is} & \\
+& & (100 - 0.8X1 - (1 - 0.005X2)X2)/100\\
+&\text{Where} & \\
+& & X1 \leq 100\\
+& & X2 \leq 100\\
+& & X1 + X2 \leq 100\\
+& & (100 - 0.8X1 - (1 - 0.005X2)X2) \leq 20\\
+\end{alignat*}
+```
 ## Problem 1.3
 
+```julia
+function after_treatment_1(X1)
+    return 0.2, (X1 ^ 2)/20
+end
+function after_treatment_2(X2)
+    return 0.005 * X2, 1.5 * X2
+end
+```
 ## Problem 1.4
+```julia
+using Plots
+function combination_of_two_treatments(X)
+    concerntration = (0.2 * X + 0.005 * (100 - X) ^ 2) / 100
+    cost = (X ^ 2)/20 + 1.5 * (100 - X)
+    return concerntration, cost
+    scatter(concerntration,cost)
+end
 
+
+```
 ## Problem 1.5
 
 ## Problem 1.6
